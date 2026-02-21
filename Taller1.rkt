@@ -1,5 +1,4 @@
 #lang eopl
-#lang eopl
 
 (define mayor5?
   (lambda (x)
@@ -68,7 +67,7 @@
 
 
 ;filter-in : predicado x lista  -> lista
-;usage: (list-set L n x P) = retorna una lista que contiene los elementos de L
+;usage: (list-set L P) = retorna una lista que contiene los elementos de L
 ;                            que satisfacen el predicado P
 (define filter-in
   (lambda (P L)
@@ -99,11 +98,96 @@
   )
 
 ;palindrome? : lista  -> bool
-;usage: (palindrome? palabra) = retorna #t si la palabra se lee igual de izquierda
+;usage: (palindrome? palabra) = Retorna #t si la palabra se lee igual de izquierda
 ;                               a derecha que de derecha a izquierda
 
 (define palindrome?
   (lambda (palabra)
     (equal? palabra (reversa-aux palabra empty))
+    )
+  )
+
+; <lista> ::= '()
+;         ::= (<SchemeVal> <lista>)
+;swappper : SchemeVal x SchemeVal x lista -> lista
+;usage: (swapper E1 x E2 x L) = Retorna una lista similar a L pero cada
+;                               ocurrencia de E1 se reemplaza con E2, y viceversa.
+(define swapper
+  (lambda (E1 E2 L)
+    (if (null? L)
+        empty
+        (cons (cond
+                [(equal? E1 (car L)) E2]
+                [(equal? E2 (car L)) E1]
+                [else (car L)]
+                )
+              (swapper E1 E2 (cdr L))
+              )
+        )
+    )
+  )
+
+;tuple-maker : SchemeValue x lista -> lista
+;usage : (tuple-maker s L) = Retorna una lista de tuplas de todos los elementos
+;                            de L emparejados con el símbolo s
+(define tuple-maker
+  (lambda (s L)
+    (if (null? L)
+        empty
+        (cons (cons s (crear-lista(car L)))
+              (tuple-maker s (cdr L))
+              )
+        )
+    )
+  )
+
+;append-list : lista x lista -> lista
+;usage : (append L1 L2) = Concatena las listas retornando una nueva lista con
+;                        todos los elementos de L1 seguido de los elementos de L2.
+(define append-list
+  (lambda (L1 L2)
+    (if (null? L1)
+        L2
+        (cons (car L1) (append-list (cdr L1) L2))
+        )
+    )
+  )
+;cartesian-product : lista-simbolos x lista-simbolos -> lista
+;usage : (cartesian-product L1 L2) = Retorna la lista de tuplas de simbolos
+;                                    resultado del producto cartesiano de ambas listas.
+(define cartesian-product
+  (lambda (L1 L2)
+    (if (null? L1)
+        empty
+        (append-list (tuple-maker (car L1) L2) (cartesian-product (cdr L1) L2))
+        )
+    )
+  )
+
+;f-tuple-maker : funcion x SchemeValue x lista -> lista
+;usage : (f-tuple-maker F a L) = Retorna una lista de tuplas (a l) donde l es un elemento
+;                                de l tal que F(a) =l
+(define f-tuple-maker
+  (lambda (F a L)
+    (if (null? L)
+        empty
+        (if (equal? (F a) (car L))
+            (cons (cons a (crear-lista (car L)))
+                  (f-tuple-maker F a (cdr L)))
+            (f-tuple-maker F a (cdr L))
+            )
+        )
+    )
+  )
+;mapping : funcion x lista x lista -> lista
+;usage : (mapping F L1 L2) = Retorna una lista de tuplas (a b) dónde a pertenece a L1
+;                            b pertenece a L2 y se cumple que F(a) = b
+(define mapping
+  (lambda (F L1 L2)
+    (if (null? L1)
+        empty
+        (append-list (f-tuple-maker F (car L1) L2)
+                     (mapping F (cdr L1) L2))
+        )
     )
   )
