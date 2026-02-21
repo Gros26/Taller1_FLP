@@ -1,0 +1,10 @@
+#Backups de editores
+*~
+
+#Archivos temporales
+*.bak
+*.tmp
+
+#macOS
+.DS_Store
+**/.DS_Store
