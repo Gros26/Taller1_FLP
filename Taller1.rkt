@@ -1,4 +1,7 @@
 #lang eopl
+;Liseth ... xxxx
+;Juan Diego ... xxxx
+;Grosman Klein García Valencia - 2340247
 
 (define mayor5?
   (lambda (x)
@@ -191,3 +194,32 @@
         )
     )
   )
+
+
+
+;-------------- 12 ----------------------
+
+;filter-acum : Int x Int x Function x Int x Function
+;usage : (filter-acum a b f acum filter) = El resultado acum de aplicar la funcion f a los elementos en [a,b] que cumplen filter
+
+(define filter-acum
+  (lambda (a b f acum filter)
+    (if (> a b)
+        acum
+        (if (filter a)
+            (filter-acum (+ a 1) b f (+ acum a) filter)
+            (filter-acum (+ a 1) b f acum filter)
+            )
+        )
+    )
+  )
+
+
+
+(filter-acum 1 10 + 0 odd?)
+
+
+
+
+
+
