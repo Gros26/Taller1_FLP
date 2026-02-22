@@ -3,6 +3,7 @@
 ;Juan Diego ... xxxx
 ;Grosman Klein García Valencia - 2340247
 
+
 (define mayor5?
   (lambda (x)
     (> x 5)))
@@ -197,6 +198,8 @@
 
 
 
+
+
 ;-------------- 12 ----------------------
 
 ;filter-acum : Int x Int x Function x Int x Function
@@ -215,9 +218,41 @@
   )
 
 
-
 (filter-acum 1 10 + 0 odd?)
 
+
+;------------- 13 ------------
+
+;operate : List x List -> Int
+;usage : (operate lrators lrands) = Un entero que es el resultado de aplicar sucesivamente
+;                                     las operaciones de lratos a los valores lrands
+
+(define lrators (list + * + - *))
+
+(define operate
+  (lambda (lrators lrands)
+    (define helper
+       (lambda (lrators lrands acum)
+        (if (null? lrators)
+            acum
+            (helper (cdr lrators) (cdr lrands) ((car lrators) acum (car lrands)))
+         )
+        )
+       )
+    (helper lrators (cdr lrands) (car lrands))
+    )
+  )
+
+
+
+; funcion como en scala, que se llama ya con un valor predeterminador, ejemplo
+(define x
+  (lambda (a)
+    ((lambda (b) (x (+ a 2))
+       )
+     (+ a 2))
+  )
+ )
 
 
 
