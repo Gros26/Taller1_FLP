@@ -268,7 +268,18 @@
     )
   )
 
+;--------------- 17 ---------------
 
+;coin-change : Int x List ->
+;usage : (coin-change monto monedas) = el numero de combinaciones posibles para obtener
+;                                        exactamente el valor monto con la lista de monedas dadas
+(define (coin-change monto monedas)
+  (cond
+    ((= monto 0) 1)
+    ((or (< monto 0) (null? monedas)) 0)
+    (else
+     (+ (coin-change monto (cdr monedas))              
+        (coin-change (- monto (car monedas)) monedas))))) 
 
 
 
