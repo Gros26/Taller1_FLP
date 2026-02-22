@@ -208,6 +208,72 @@
   )
 
 
+;------------------- 9 -----------------------------
+
+; count-smaller : int x lista -> Int
+; usage: (count-smaller x L) = retorna la cantidad de elementos en L que son menores que x.
+(define count-smaller
+  (lambda (x L)
+    (if (null? L)
+        0
+        (if (> x (car L)) (+ 1 (count-smaller x (cdr L)))
+          (count-smaller x (cdr L)))
+        )
+    )
+  )
+; inversions : lista -> int
+; usage: (inversions L) = retorna el número de inversiones en L
+(define inversions
+  (lambda (L)
+    (if (null? L)
+        0
+        (+ (count-smaller (car L) (cdr L))
+           (inversions (cdr L)))
+        )
+    )
+  )
+
+;--------------------- 10 --------------------
+
+; <lista-parentesis> ::= '()
+;         ::= (<parentesis> <lista-parebtesus>)
+;<parentesis> ::= ( | )
+;
+; balanced-parentheses? : lista -> Bool
+; usage: (alanced-parentheses? L) retorna #t si los paréntesis estan balanceados, 
+;                                 de lo contrario retorna #f
+(define balanced-parentheses?
+  (lambda (L)
+    (letrec 
+        (
+         (balance-aux 
+          (lambda (lista cont)
+            (if (< cont 0)
+                #f 
+                (if (null? lista)
+                    (zero? cont) 
+                    (cond
+                      [(equal? (car lista) '"(") (balance-aux (cdr lista) (+ cont 1))]
+                      [(equal? (car lista) '")") (balance-aux (cdr lista) (- cont 1))]
+                      [else (balance-aux (cdr lista) cont)]
+                      )
+                    )
+                )
+            )
+          )
+         )
+            (balance-aux L 0)
+      )
+    )
+  )
+
+
+; para hacer las pruebas deben colocar ""
+; con el ejemplo del profe sería algo así:
+; Prueba 1: ()() -> Debería ser #t
+;(balanced-parentheses? '("(" ")" "(" ")"))
+;(balanced-parentheses? '("(" "(" ")" ")" "(" ")"))
+
 
 ;---------------- 11 --------------------
 
@@ -246,7 +312,7 @@
 (filter-acum 1 10 + 0 odd?)
 
 
-;------------- 13 ------------
+;------------------ 13 --------------
 
 ;operate : List x List -> Int
 ;usage : (operate lrators lrands) = Un entero que es el resultado de aplicar sucesivamente
@@ -265,6 +331,25 @@
         )
        )
     (helper lrators (cdr lrands) (car lrands))
+    )
+  )
+
+;---------------- 14 ---------------
+
+; <arbol-binario> ::= (arbol-vacio) empty
+;                 ::= (nodo) numero <arbol-binario> <arbol-binario>)
+; path : n x BST -> lista
+; usage: (path n BST) = retorna una lista con la ruta desde la raíz hasta n 
+
+(define path
+  (lambda (n BST)
+    (if (null? BST)    ; n esta garantizado, lo dejamos o quitamos?
+        empty
+        (cond
+          [(= n (car BST)) empty]
+          [(< n (car BST)) (cons 'left (path n (cadr BST)))]
+          [(> n (car BST)) (cons 'right (path n (caddr BST)))])
+        )
     )
   )
 
