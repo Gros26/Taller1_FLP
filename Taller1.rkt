@@ -12,6 +12,8 @@
   (lambda (x)
     (cons x empty)))
 
+;------------------ 1 --------------------
+
 ; <par> ::= (<int> <int>)
 ; <lista-pares> ::= '()
 ;               ::= (<par> <lista-pares>)
@@ -32,6 +34,7 @@
     )
   )
 
+;------------------- 2 -----------------------
 
 ; <lista> ::= '()
 ;         ::= (<SchemeVal> <lista>)
@@ -49,7 +52,7 @@
     )
   )
 
-
+;----------------- 3 -------------------
 
 ;list-set : lista x int x SchemeVal x predicado  -> lista
 ;usage: (list-set L n x P) = retorna una lista similar a L, pero reemplaza el elemento en la
@@ -69,6 +72,7 @@
     )
   )
 
+;------------------ 4 ------------------------
 
 ;filter-in : predicado x lista  -> lista
 ;usage: (list-set L P) = retorna una lista que contiene los elementos de L
@@ -85,6 +89,7 @@
     )
 )
 
+;----------------- 5 --------------------
 
 ; <lista-simbolos> ::= '()
 ;                  ::= (<simbolo> <lista-simbolos>)
@@ -111,6 +116,8 @@
     )
   )
 
+;------------------ 6 --------------------
+
 ; <lista> ::= '()
 ;         ::= (<SchemeVal> <lista>)
 ;swappper : SchemeVal x SchemeVal x lista -> lista
@@ -130,6 +137,8 @@
         )
     )
   )
+
+;----------------- 7 ----------------------------------
 
 ;tuple-maker : SchemeValue x lista -> lista
 ;usage : (tuple-maker s L) = Retorna una lista de tuplas de todos los elementos
@@ -168,6 +177,8 @@
     )
   )
 
+;----------------------- 8 ------------------
+
 ;f-tuple-maker : funcion x SchemeValue x lista -> lista
 ;usage : (f-tuple-maker F a L) = Retorna una lista de tuplas (a l) donde l es un elemento
 ;                                de l tal que F(a) =l
@@ -198,6 +209,20 @@
 
 
 
+;---------------- 11 --------------------
+
+;zip : Function x List x List -> List
+;usage : (zip f l1 l2) = Una lista donde la posicion n-esima corresponde al resultado de aplicar
+;                        la funcion F sobre los elementos en la posicion n-esima en L1 y L2.
+
+(define zip
+  (lambda (f l1 l2)
+    (if (null? l1)
+        empty
+        (cons (f (car l1) (car l2)) (zip f (cdr l1) (cdr l2)))
+        )
+    )
+  )
 
 
 ;-------------- 12 ----------------------
@@ -243,16 +268,6 @@
     )
   )
 
-
-
-; funcion como en scala, que se llama ya con un valor predeterminador, ejemplo
-(define x
-  (lambda (a)
-    ((lambda (b) (x (+ a 2))
-       )
-     (+ a 2))
-  )
- )
 
 
 
