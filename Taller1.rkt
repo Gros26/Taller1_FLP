@@ -1,6 +1,6 @@
 #lang eopl
-;Liseth ... xxxx
-;Juan Diego ... xxxx
+;Liseth Natalia Rivera Cordoba - 2223510
+;Juan Diego Cardenas Mejia - 2416437
 ;Grosman Klein García Valencia - 2340247
 
 
@@ -179,30 +179,18 @@
 
 ;----------------------- 8 ------------------
 
-;f-tuple-maker : funcion x SchemeValue x lista -> lista
-;usage : (f-tuple-maker F a L) = Retorna una lista de tuplas (a l) donde l es un elemento
-;                                de l tal que F(a) =l
-(define f-tuple-maker
-  (lambda (F a L)
-    (if (null? L)
-        empty
-        (if (equal? (F a) (car L))
-            (cons (cons a (crear-lista (car L)))
-                  (f-tuple-maker F a (cdr L)))
-            (f-tuple-maker F a (cdr L))
-            )
-        )
-    )
-  )
 ;mapping : funcion x lista x lista -> lista
-;usage : (mapping F L1 L2) = Retorna una lista de tuplas (a b) dónde a pertenece a L1
-;                            b pertenece a L2 y se cumple que F(a) = b
+;usage : (mapping F L1 L2) = Retorna una lista de tuplas (a_n b_n) dónde a pertenece la posición n en L1
+;                            b pertenece a la posición n en L2 y se cumple que F(a) = b
 (define mapping
   (lambda (F L1 L2)
     (if (null? L1)
         empty
-        (append-list (f-tuple-maker F (car L1) L2)
-                     (mapping F (cdr L1) L2))
+        (if (equal? (F (car L1)) (car L2))
+            (cons (cons (car L1) (crear-lista (car L2)))
+                  (mapping F (cdr L1) (cdr L2)))
+            (mapping F (cdr L1) (cdr L2))
+            )
         )
     )
   )
@@ -301,7 +289,7 @@
     (if (> a b)
         acum
         (if (filter a)
-            (filter-acum (+ a 1) b f (+ acum a) filter)
+            (filter-acum (+ a 1) b f (f acum a) filter)
             (filter-acum (+ a 1) b f acum filter)
             )
         )
@@ -353,6 +341,51 @@
     )
   )
 
+;---------------- 15 ---------------
+
+; <arbol-binario> ::= (arbol-vacio) empty
+;                 ::= (nodo) numero <arbol-binario> <arbol-binario>)
+; count-odd-and-even : BT -> lista
+; usage: (count-odd-and-even arbol) = retorna con dos enteros denotando la cantidad de numeros pares e impares en el árbol.
+
+(define count-odd-and-even
+  (lambda (arbol)
+    (if (null? arbol)
+        (cons 0 (crear-lista 0))
+        (let ([left-count (count-odd-and-even (cadr arbol))]
+                 [right-count (count-odd-and-even (caddr arbol))])
+          (cond
+            [(even? (car arbol))
+             (cons (+ 1 (car left-count) (car right-count))
+                (crear-lista (+ (cadr left-count) (cadr right-count))))]
+            [(odd? (car arbol))
+             (cons (+ (car left-count) (car right-count))
+                (crear-lista (+ 1 (cadr left-count) (cadr right-count))))])
+          )
+        )
+    )
+  )
+
+
+;---------------- 16 ---------------
+; <solucion> ::= (solucion-trivial) '(origen destino)
+;                 ::= (solucion) <origen-a-auxiliar>(origen destino)<auxiliar-a-destino>
+; hanoi : int x symbol x symbol -> lista
+; usage: (hanoi n origen auxiliar destino) = retorna los movimientos necesarios para resolver el problema de las torres de hanoi
+;                                            como una lista de pares de simbolos representado el paso de discos entre torres.
+(define hanoi
+  (lambda (n origen auxiliar destino)
+    (if (equal? n 1)
+        (crear-lista (cons origen (crear-lista destino)))
+        (append-list(hanoi (- n 1) origen destino auxiliar)
+                           (append-list (hanoi 1 origen auxiliar destino)
+                                        (hanoi (- n 1) auxiliar origen destino))
+                           )
+                    )
+        )
+    )
+
+
 ;--------------- 17 ---------------
 
 ;coin-change : Int x List ->
@@ -367,5 +400,20 @@
         (coin-change (- monto (car monedas)) monedas))))) 
 
 
+;---------------- 18 ---------------
+; <fila> ::= (fila inicial) (1)
+;        ::= (fila n) (0 <fila n-1>) + (<fila n-1> 0)
+; pascal : int -> lista
+; usage: (pascal) = retorna la n-ésima fila del triangulo de Pascal como una lista de enteros.
 
+(define pascal
+  (lambda (N)
+    (if (equal? N 1)
+        (crear-lista 1)
+        (zip + (append-list (cons 0 empty) (pascal (- N 1)))
+             (append-list (pascal (- N 1)) (cons 0 empty))
+             )
+        )
+    )
+  )
 
