@@ -92,6 +92,9 @@
 ;; Lista x Int x SchemeVal x Predicado -> Lista : Procedimiento que retorna una 
 ;; lista similar a L, pero reemplaza el elemento en la posicion n (indexada desde 0) 
 ;; por el valor x, solo si el elemento original en esa posicion satisface el predicado P
+
+;; <lista> ::= ()
+;;         ::= (<SchemeVal> <lista>)
   
 (define list-set
   (lambda (L n x P)
@@ -130,6 +133,9 @@
 ;; Proposito:
 ;; Predicado x Lista -> Lista : Procedimiento que retorna una nueva lista que 
 ;; contiene unicamente los elementos de L que satisfacen el predicado P
+
+;; <lista> ::= ()
+;;         ::= (<SchemeVal> <lista>)
 
 (define filter-in
   (lambda (P L)
@@ -212,6 +218,9 @@
 ;; SchemeVal x SchemeVal x Lista -> Lista : Procedimiento que retorna una lista 
 ;; similar a L, pero donde cada ocurrencia del elemento E1 es reemplazada por E2, 
 ;; y cada ocurrencia de E2 es reemplazada por E1
+
+;; <lista> ::= ()
+;;         ::= (<SchemeVal> <lista>)
 
 (define swapper
   (lambda (E1 E2 L)
@@ -319,6 +328,11 @@
 ;; lista de tuplas (a_n b_n), dónde a pertenece la posición n en L1, b
 ;; pertenece a la posición n en L2 y se cumple que F(a) = b
 
+;; <lista> ::= ()
+;;         ::= (<SchemeVal> <lista>)
+;; <lista-tuplas> ::= ()
+;;                ::= ((<SchemeVal> <SchemeVal>) <lista-tuplas>)
+
 (define mapping
   (lambda (F L1 L2)
     (if (null? L1)
@@ -352,6 +366,9 @@
 ;; Proposito:
 ;; Int x Lista de Enteros -> Int : Procedimiento que retorna la cantidad de elementos 
 ;; en la lista L que son estrictamente menores que el numero x
+
+;; <lista-enteros> ::= ()
+;;                 ::= (<Int> <lista-enteros>)
 
 (define count-smaller
   (lambda (x L)
@@ -451,6 +468,9 @@
 ;; donde la posicion n-esima corresponde al resultado de aplicar la funcion F 
 ;;  sobre los elementos en la posicion n-esima en L1 y L2
 
+;; <lista> ::= ()
+;;         ::= (<SchemeVal> <lista>)
+
 (define zip
   (lambda (f l1 l2)
     (if (null? l1)
@@ -482,6 +502,8 @@
 ;; a un valor acumulado "acum" y retorna el resultado "acum" de aplicar la funcion f 
 ;; a los elementos en [a,b] que cumplen filter
 
+;; <rango> ::= [<Int> <Int>]   donde a <= b define un rango valido
+
 (define filter-acum
   (lambda (a b f acum filter)
     (if (> a b)
@@ -510,9 +532,16 @@
 
 ;------------------ 13 --------------
 
-;operate : List x List -> Int
-;usage : (operate lrators lrands) = Un entero que es el resultado de aplicar sucesivamente
-;                                     las operaciones de lratos a los valores lrands
+;; operate :
+;; Proposito:
+;; Lista de Operadores x Lista de Operandos -> SchemeVal : Procedimiento que aplica
+;; sucesivamente cada operador de lrators al valor acumulado con el siguiente elemento
+;; de lrands, iniciando con el primer elemento de lrands como acumulador inicial
+
+;; <lista-operadores> ::= ()
+;;                    ::= (<Funcion> <lista-operadores>)
+;; <lista-operandos>  ::= (<SchemeVal>)
+;;                    ::= (<SchemeVal> <lista-operandos>)
 
 (define lrators (list + * + - *))
 
@@ -529,6 +558,23 @@
     (helper lrators (cdr lrands) (car lrands))
     )
   )
+
+;; Pruebas
+; 1. Caso con un único operando y sin operadores
+(operate '() '(5))
+; Resultado esperado: 5
+
+; 2. Caso con suma y multiplicación
+(operate (list + *) '(1 2 3))
+; Resultado esperado: 9  ; ((1 + 2) * 3)
+
+; 3. Caso usando la lista lrators predefinida
+(operate lrators '(1 2 3 4 5 6))
+; Resultado esperado: 48  ; (((((1+2)*3)+4)-5)*6)
+
+; 4. Caso con resta y suma
+(operate (list - +) '(10 3 2))
+; Resultado esperado: 9  ; ((10 - 3) + 2)
 
 
 ;---------------- 14 ---------------
@@ -569,10 +615,14 @@
 
 ;---------------- 15 ---------------
 
-; <arbol-binario> ::= (arbol-vacio) empty
-;                 ::= (nodo) numero <arbol-binario> <arbol-binario>)
-; count-odd-and-even : BT -> lista
-; usage: (count-odd-and-even arbol) = retorna con dos enteros denotando la cantidad de numeros pares e impares en el árbol.
+;; count-odd-and-even :
+;; Proposito:
+;; arbol-binario -> Lista : Procedimiento que retorna una lista de dos enteros
+;; donde el primero indica la cantidad de numeros pares en el arbol y
+;; el segundo la cantidad de numeros impares
+
+;; <arbol-binario> ::= ()
+;;                 ::= (<Int> <arbol-binario> <arbol-binario>)
 
 (define count-odd-and-even
   (lambda (arbol)
@@ -592,13 +642,38 @@
     )
   )
 
+;; Pruebas
+; 1. Caso base: árbol vacío
+(count-odd-and-even empty)
+; Resultado esperado: (0 0)
+
+; 2. Caso con solo la raiz siendo par
+(count-odd-and-even (list 4 empty empty))
+; Resultado esperado: (1 0)
+
+; 3. Caso con solo la raiz siendo impar
+(count-odd-and-even (list 3 empty empty))
+; Resultado esperado: (0 1)
+
+; 4. Árbol completo: pares={8,6,10,14}, impares={3,1}
+(count-odd-and-even (list 8 (list 3 (list 1 empty empty) (list 6 empty empty)) (list 10 empty (list 14 empty empty))))
+; Resultado esperado: (4 2)
+
+; 5. Árbol con todos los nodos impares
+(count-odd-and-even (list 5 (list 3 empty empty) (list 7 empty empty)))
+; Resultado esperado: (0 3)
+
 
 ;---------------- 16 ---------------
-; <solucion> ::= (solucion-trivial) '(origen destino)
-;                 ::= (solucion) <origen-a-auxiliar>(origen destino)<auxiliar-a-destino>
-; hanoi : int x symbol x symbol -> lista
-; usage: (hanoi n origen auxiliar destino) = retorna los movimientos necesarios para resolver el problema de las torres de hanoi
-;                                            como una lista de pares de simbolos representado el paso de discos entre torres.
+
+;; hanoi :
+;; Proposito:
+;; Int x Symbol x Symbol x Symbol -> Lista de Pares : Procedimiento que retorna
+;; la secuencia de movimientos necesarios para resolver las Torres de Hanoi con n discos,
+;; representando cada movimiento como un par (torre-origen torre-destino)
+
+;; <solucion> ::= ()
+;;             ::= ((<Symbol> <Symbol>) <solucion>)
 (define hanoi
   (lambda (n origen auxiliar destino)
     (if (equal? n 1)
@@ -611,26 +686,77 @@
         )
     )
 
+;; Pruebas
+; 1. Caso con 1 disco
+(hanoi 1 'A 'B 'C)
+; Resultado esperado: '((A C))
+
+; 2. Caso con 2 discos
+(hanoi 2 'A 'B 'C)
+; Resultado esperado: '((A B) (A C) (B C))
+
+; 3. Caso con 3 discos
+(hanoi 3 'A 'B 'C)
+; Resultado esperado: '((A C) (A B) (C B) (A C) (B A) (B C) (A C))
+
+; 4. Caso con nombres de torres descriptivos
+(hanoi 2 'inicio 'aux 'fin)
+; Resultado esperado: '((inicio aux) (inicio fin) (aux fin))
+
 
 ;--------------- 17 ---------------
 
-;coin-change : Int x List ->
-;usage : (coin-change monto monedas) = el numero de combinaciones posibles para obtener
-;                                        exactamente el valor monto con la lista de monedas dadas
-(define (coin-change monto monedas)
-  (cond
-    ((= monto 0) 1)
-    ((or (< monto 0) (null? monedas)) 0)
-    (else
-     (+ (coin-change monto (cdr monedas))              
-        (coin-change (- monto (car monedas)) monedas))))) 
+;; coin-change :
+;; Proposito:
+;; Int x Lista de Enteros -> Int : Procedimiento que retorna el numero de
+;; combinaciones posibles para obtener exactamente el valor monto utilizando
+;; las monedas disponibles en la lista (con repeticion permitida)
+
+;; <lista-monedas> ::= ()
+;;                 ::= (<Int> <lista-monedas>)
+(define coin-change
+  (lambda (monto monedas)
+    (cond
+      ((= monto 0) 1)
+      ((or (< monto 0) (null? monedas)) 0)
+      (else
+      (+ (coin-change monto (cdr monedas))              
+          (coin-change (- monto (car monedas)) monedas)
+        )
+      )
+    )
+  )
+) 
+
+;; Pruebas
+; 1. Caso base: monto 0 (siempre hay exactamente 1 combinacion)
+(coin-change 0 '(1 5 10))
+; Resultado esperado: 1
+
+; 2. Caso sin monedas disponibles
+(coin-change 5 '())
+; Resultado esperado: 0
+
+; 3. Caso donde el monto no se puede obtener con las monedas dadas
+(coin-change 3 '(5 10))
+; Resultado esperado: 0
+
+; 4. Caso con monedas estandar (cambio de 10 con monedas 1, 5, 10)
+(coin-change 10 '(1 5 10))
+; Resultado esperado: 4  ; {10}, {5+5}, {5+1*5}, {1*10}
+
+; 5. Caso con una sola denominacion
+(coin-change 6 '(2))
+; Resultado esperado: 1  ; solo {2+2+2}
 
 
 ;---------------- 18 ---------------
-; <fila> ::= (fila inicial) (1)
-;        ::= (fila n) (0 <fila n-1>) + (<fila n-1> 0)
-; pascal : int -> lista
-; usage: (pascal) = retorna la n-ésima fila del triangulo de Pascal como una lista de enteros.
+
+;; pascal :
+;; Proposito:
+;; Int -> Lista de Enteros : Procedimiento que retorna la N-esima fila del
+;; triangulo de Pascal como una lista de enteros
+
 
 (define pascal
   (lambda (N)
@@ -642,4 +768,25 @@
         )
     )
   )
+
+;; Pruebas
+; 1. Primera fila
+(pascal 1)
+; Resultado esperado: '(1)
+
+; 2. Segunda fila
+(pascal 2)
+; Resultado esperado: '(1 1)
+
+; 3. Tercera fila
+(pascal 3)
+; Resultado esperado: '(1 2 1)
+
+; 4. Cuarta fila
+(pascal 4)
+; Resultado esperado: '(1 3 3 1)
+
+; 5. Quinta fila
+(pascal 5)
+; Resultado esperado: '(1 4 6 4 1)
 
