@@ -185,7 +185,7 @@
 (define palindrome?
   (lambda (palabra)
     (cond
-      [(null? palabra) #f]
+      [(null? palabra) #t] ; asumimos que la cadena vacia es palindrome
       [(null? (cdr palabra)) #t]
       [else
        (let (
