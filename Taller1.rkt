@@ -3,11 +3,6 @@
 ;Juan Diego Cardenas Mejia - 2416437
 ;Grosman Klein García Valencia - 2340247
 
-
-(define mayor5?
-  (lambda (x)
-    (> x 5)))
-
 ;------------------ 1 --------------------
 
 ;; invert :
@@ -408,10 +403,10 @@
 ; 1. Caso base
 (inversions empty)
 
-; 2. Caso donde no hay inversiones posibles (orden descendente)
+; 2. Caso donde no hay inversiones posibles (orden ascendente)
 (inversions '(1 2 3 4 5))
 
-; 3. Caso con el número máximo de inversiones (orden ascendente)
+; 3. Caso con el número máximo de inversiones (orden descendente)
 (inversions '(5 4 3 2 1))
 
 ; 4. Caso con lista desordenada
