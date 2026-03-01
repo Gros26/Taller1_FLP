@@ -8,10 +8,6 @@
   (lambda (x)
     (> x 5)))
 
-(define crear-lista
-  (lambda (x)
-    (cons x empty)))
-
 ;------------------ 1 --------------------
 
 ;; invert :
@@ -64,7 +60,7 @@
   (lambda (L)
     (if (null? L)
         empty
-        (cons (crear-lista (car L))
+        (cons (list (car L))
               (down (cdr L)))
         )
     )
@@ -188,10 +184,23 @@
 ;; Lista de Simbolos -> Bool : Procedimiento que determina si una lista de 
 ;; simbolos es un palindromo, es decir, se lee exactamente igual de izquierda 
 ;; a derecha que de derecha a izquierda
+;; <palindromo> ::= (<Simbolo>)
+;;              ::= (<Mismo Simbolo> <palindromo> <Mismo Simbolo>)
 
 (define palindrome?
   (lambda (palabra)
-    (equal? palabra (reversa-aux palabra empty))
+    (cond
+      [(null? palabra) #f]
+      [(null? (cdr palabra)) #t]
+      [else
+       (let (
+             [palabra-reversed (reversa-aux palabra empty)]
+             [palabra-inner (cdr (reversa-aux (cdr palabra) empty))])
+         (if (equal? (car palabra) (car palabra-reversed))
+             (palindrome? palabra-inner)
+             #f)
+         )
+       ])
     )
   )
 
@@ -268,7 +277,7 @@
   (lambda (s L)
     (if (null? L)
         empty
-        (cons (cons s (crear-lista(car L)))
+        (cons (cons s (list(car L)))
               (tuple-maker s (cdr L))
               )
         )
@@ -338,7 +347,7 @@
     (if (null? L1)
         empty
         (if (equal? (F (car L1)) (car L2))
-            (cons (cons (car L1) (crear-lista (car L2)))
+            (cons (cons (car L1) (list (car L2)))
                   (mapping F (cdr L1) (cdr L2)))
             (mapping F (cdr L1) (cdr L2))
             )
@@ -627,16 +636,16 @@
 (define count-odd-and-even
   (lambda (arbol)
     (if (null? arbol)
-        (cons 0 (crear-lista 0))
+        (cons 0 (list 0))
         (let ([left-count (count-odd-and-even (cadr arbol))]
                  [right-count (count-odd-and-even (caddr arbol))])
           (cond
             [(even? (car arbol))
              (cons (+ 1 (car left-count) (car right-count))
-                (crear-lista (+ (cadr left-count) (cadr right-count))))]
+                (list (+ (cadr left-count) (cadr right-count))))]
             [(odd? (car arbol))
              (cons (+ (car left-count) (car right-count))
-                (crear-lista (+ 1 (cadr left-count) (cadr right-count))))])
+                (list (+ 1 (cadr left-count) (cadr right-count))))])
           )
         )
     )
@@ -677,7 +686,7 @@
 (define hanoi
   (lambda (n origen auxiliar destino)
     (if (equal? n 1)
-        (crear-lista (cons origen (crear-lista destino)))
+        (list (cons origen (list destino)))
         (append-list(hanoi (- n 1) origen destino auxiliar)
                            (append-list (hanoi 1 origen auxiliar destino)
                                         (hanoi (- n 1) auxiliar origen destino))
@@ -761,7 +770,7 @@
 (define pascal
   (lambda (N)
     (if (equal? N 1)
-        (crear-lista 1)
+        (list 1)
         (zip + (append-list (cons 0 empty) (pascal (- N 1)))
              (append-list (pascal (- N 1)) (cons 0 empty))
              )
