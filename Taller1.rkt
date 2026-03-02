@@ -7,7 +7,7 @@
 
 ;; invert :
 ;; Proposito:
-;; Lista de pares x Predicado -> Lista de pares : Procedimiento que evalua una lista 
+;; Lista de pares x Predicado -> Lista de pares' : Procedimiento que evalua una lista 
 ;; de pares (x y). Si ambos elementos del par cumplen con el predicado P, invierte 
 ;; el par a (y x) y lo conserva. Si alguno no cumple, el par es descartado
 
@@ -46,7 +46,7 @@
 
 ;; down :
 ;; Proposito:
-;; Lista -> Lista : Procedimiento que retorna una nueva lista donde cada elemento 
+;; Lista -> Lista' : Procedimiento que retorna una nueva lista donde cada elemento 
 ;; de la lista original L tiene un nivel adicional de parentesis
 ;; <lista> ::= ()
 ;;         ::= (<SchemeVal> <lista>)
@@ -80,7 +80,7 @@
 
 ;; list-set :
 ;; Proposito:
-;; Lista x Int x SchemeVal x Predicado -> Lista : Procedimiento que retorna una 
+;; Lista x Int x SchemeVal x Predicado -> Lista' : Procedimiento que retorna una 
 ;; lista similar a L, pero reemplaza el elemento en la posicion n (indexada desde 0) 
 ;; por el valor x, solo si el elemento original en esa posicion satisface el predicado P
 
@@ -93,7 +93,8 @@
         empty
         (if (zero? n)
             (if (P (car L))
-                (cons x (cdr L)) L)
+                (cons x (cdr L))
+                L)
             (cons (car L)
                   (list-set (cdr L) (- n 1) x P))
             )
@@ -114,7 +115,7 @@
 ; 4. Prueba indexación 0  
 (list-set '(a b c) 0 'z symbol?)
 
-; 5. Cado donde el indice n es mayor a la longitud de la lista
+; 5. Caso donde el indice n es mayor a la longitud de la lista
 (list-set '(1 2 3) 5 'x odd?)
 
 
@@ -122,7 +123,7 @@
 
 ;; filter-in :
 ;; Proposito:
-;; Predicado x Lista -> Lista : Procedimiento que retorna una nueva lista que 
+;; Predicado x Lista -> Lista' : Procedimiento que retorna una nueva lista que 
 ;; contiene unicamente los elementos de L que satisfacen el predicado P
 
 ;; <lista> ::= ()
@@ -158,7 +159,7 @@
 
 ;; reversa-aux :
 ;; Proposito:
-;; Lista de Simbolos x Lista de Simbolos -> Lista de Simbolos : Procedimiento que 
+;; Lista de Simbolos x Lista de Simbolos -> Lista de Simbolos' : Procedimiento que 
 ;; invierte la lista L moviendo sus elementos uno por uno al acumulador 'acc' 
 ;; de forma recursiva
 
@@ -174,18 +175,32 @@
     )
   )
 
+;; Pruebas
+; 1. Caso base
+(reversa-aux empty empty)
+
+; 2. Caso con lista de único elemento
+(reversa-aux '(x) empty)
+
+; 3. Caso con lista común
+(reversa-aux '(1 2 3 4) empty)
+
+; 4. Caso con acumulador no vacío
+(reversa-aux '(1 2 3 4) '(5))
+
 ;; palindrome? :
 ;; Proposito:
 ;; Lista de Simbolos -> Bool : Procedimiento que determina si una lista de 
 ;; simbolos es un palindromo, es decir, se lee exactamente igual de izquierda 
 ;; a derecha que de derecha a izquierda
-;; <palindromo> ::= (<Simbolo>)
+;;
+;; <palindromo> ::= (<Simbolo>) | ()
 ;;              ::= (<Mismo Simbolo> <palindromo> <Mismo Simbolo>)
 
 (define palindrome?
   (lambda (palabra)
     (cond
-      [(null? palabra) #f]
+      [(null? palabra) #t]
       [(null? (cdr palabra)) #t]
       [else
        (let (
@@ -219,7 +234,7 @@
 
 ;; swapper :
 ;; Proposito:
-;; SchemeVal x SchemeVal x Lista -> Lista : Procedimiento que retorna una lista 
+;; SchemeVal x SchemeVal x Lista -> Lista' : Procedimiento que retorna una lista 
 ;; similar a L, pero donde cada ocurrencia del elemento E1 es reemplazada por E2, 
 ;; y cada ocurrencia de E2 es reemplazada por E1
 
@@ -264,9 +279,10 @@
 ;; Proposito:
 ;; SchemeVal x Lista -> Lista de Tuplas : Procedimiento que retorna una lista 
 ;; de tuplas de todos los elementos de L emparejados con el símbolo s
-
+;; <tupla> ::= (<SchemeVal> <SchemeVal>)
+;;
 ;; <lista-tuplas> ::= ()
-;;                ::= ((<SchemeVal> <SchemeVal>) <lista-tuplas>)
+;;                ::= (<tupla> <lista-tuplas>)
 
 (define tuple-maker
   (lambda (s L)
@@ -279,9 +295,23 @@
     )
   )
 
+;; Pruebas
+; 1. Caso base con lista vacía
+(tuple-maker 'x '())
+
+; 2. Caso con lista con un único elemento
+(tuple-maker 'x '(y))
+
+; 3. Caso con lista de longitud mayor a 1
+(tuple-maker 'x '(w y z))
+
+; 4. Caso con mezcla entre cáracteres y numeros
+(tuple-maker 'x '(1 2 3))
+
+
 ;; append-list :
 ;; Proposito:
-;; Lista x Lista -> Lista : Procedimiento que concatena dos listas, retornando 
+;; Lista x Lista -> Lista' : Procedimiento que concatena dos listas, retornando 
 ;; una nueva lista con todos los elementos de L1 seguidos de los elementos de L2
 
 (define append-list
@@ -293,10 +323,29 @@
     )
   )
 
+;; Pruebas
+; 1. Caso base con lista L1 vacía
+(append-list '() '(1 2 3))
+
+; 2. Caso con lista L2 vacía
+(append-list '(1 2 3) '())
+
+; 3. Caso con listas mixtas entre cáracteres y numeros
+(append-list '(1 2 3) '(w y z))
+
+
+
 ;; cartesian-product :
 ;; Proposito:
 ;; Lista de Simbolos x Lista de Simbolos -> Lista de Tuplas : Procedimiento que retorna
 ;; una lista de tuplas correspondientes al producto cartesiano entre ambas listas
+;; <tupla> ::= (<SchemeVal> <SchemeVal>)
+;;
+;; <lista-tuplas> ::= ()
+;;                ::= (<tupla> <lista-tuplas>)
+;;
+;; <producto-cartesiano> ::= ()
+;;                       ::= (<lista-tuplas> <producto-cartesiano>)
 
 (define cartesian-product
   (lambda (L1 L2)
@@ -329,13 +378,16 @@
 ;; mapping :
 ;; Proposito:
 ;; Funcion x Lista x Lista -> Lista de Tuplas : Procedimiento que retorna una 
-;; lista de tuplas (a_n b_n), dónde a pertenece la posición n en L1, b
-;; pertenece a la posición n en L2 y se cumple que F(a) = b
-
+;; lista de tuplas (a_i b_i), dónde a pertenece la posición i en L1, b
+;; pertenece a la posición i en L2 y se cumple que F(a) = b
+;;
+;; <tupla> ::= (<SchemeVal> <SchemeVal>)
+;;
 ;; <lista> ::= ()
 ;;         ::= (<SchemeVal> <lista>)
+;;
 ;; <lista-tuplas> ::= ()
-;;                ::= ((<SchemeVal> <SchemeVal>) <lista-tuplas>)
+;;                ::= (<tupla> <lista-tuplas>)
 
 (define mapping
   (lambda (F L1 L2)
@@ -384,6 +436,19 @@
     )
   )
 
+;; Pruebas
+; 1. Caso base
+(count-smaller 2 '())
+
+; 2. Caso con todos los elementos de L mayores que x
+(count-smaller 2 '(3 4 5))
+
+; 3. Caso con todos los elementos de L menores que x
+(count-smaller 2 '(-1 0 1))
+
+; 4. Caso con algunos elementos mayores y otros menores que x
+(count-smaller 2 '(1 3 -1))
+
 ;; inversions :
 ;; Proposito:
 ;; Lista de Enteros -> Int : Procedimiento que retorna el numero total de inversiones 
@@ -399,7 +464,7 @@
     )
   )
 
-;; Pruebas para inversions (y por extension, count-smaller)
+;; Pruebas
 ; 1. Caso base
 (inversions empty)
 
@@ -421,6 +486,7 @@
 ;;
 ;; <lista-parentesis> ::= ()
 ;;                    ::= (<parentesis> <lista-parentesis>)
+;;
 ;; <parentesis>       ::= O | C
 
 (define balanced-parentheses?
@@ -468,18 +534,18 @@
 
 ;; zip :
 ;; Proposito:
-;; Funcion x Lista x Lista -> Lista : Procedimiento que retorna una nueva lista 
+;; Funcion x Lista x Lista -> Lista' : Procedimiento que retorna una nueva lista 
 ;; donde la posicion n-esima corresponde al resultado de aplicar la funcion F 
-;;  sobre los elementos en la posicion n-esima en L1 y L2
+;; sobre los elementos en la posicion n-esima en L1 y L2
 
 ;; <lista> ::= ()
 ;;         ::= (<SchemeVal> <lista>)
 
 (define zip
-  (lambda (f l1 l2)
-    (if (null? l1)
+  (lambda (F L1 L2)
+    (if (null? L1)
         empty
-        (cons (f (car l1) (car l2)) (zip f (cdr l1) (cdr l2)))
+        (cons (F (car L1) (car L2)) (zip F (cdr L1) (cdr L2)))
         )
     )
   )
@@ -505,23 +571,20 @@
 ;; Int x Int x Funcion x Int x Funcion -> Int : Procedimiento que aplica la funcion f
 ;; a un valor acumulado "acum" y retorna el resultado "acum" de aplicar la funcion f 
 ;; a los elementos en [a,b] que cumplen filter
-
+;;
 ;; <rango> ::= [<Int> <Int>]   donde a <= b define un rango valido
 
 (define filter-acum
-  (lambda (a b f acum filter)
+  (lambda (a b F acum filter)
     (if (> a b)
         acum
         (if (filter a)
-            (filter-acum (+ a 1) b f (f acum a) filter)
-            (filter-acum (+ a 1) b f acum filter)
+            (filter-acum (+ a 1) b F (F acum a) filter)
+            (filter-acum (+ a 1) b F acum filter)
             )
         )
     )
   )
-
-
-(filter-acum 1 10 + 0 odd?)
 
 ;; Pruebas
 ; 1. Caso de suma (numeros impares entre 1 y 10)
@@ -544,10 +607,9 @@
 
 ;; <lista-operadores> ::= ()
 ;;                    ::= (<Funcion> <lista-operadores>)
+;;
 ;; <lista-operandos>  ::= (<SchemeVal>)
 ;;                    ::= (<SchemeVal> <lista-operandos>)
-
-(define lrators (list + * + - *))
 
 (define operate
   (lambda (lrators lrands)
@@ -573,7 +635,9 @@
 ; Resultado esperado: 9  ; ((1 + 2) * 3)
 
 ; 3. Caso usando la lista lrators predefinida
-(operate lrators '(1 2 3 4 5 6))
+(let ([lrators (list + * + - *)])
+  (operate lrators '(1 2 3 4 5 6))
+  )
 ; Resultado esperado: 48  ; (((((1+2)*3)+4)-5)*6)
 
 ; 4. Caso con resta y suma
@@ -624,7 +688,7 @@
 ;; arbol-binario -> Lista : Procedimiento que retorna una lista de dos enteros
 ;; donde el primero indica la cantidad de numeros pares en el arbol y
 ;; el segundo la cantidad de numeros impares
-
+;;
 ;; <arbol-binario> ::= ()
 ;;                 ::= (<Int> <arbol-binario> <arbol-binario>)
 
@@ -675,15 +739,17 @@
 ;; Int x Symbol x Symbol x Symbol -> Lista de Pares : Procedimiento que retorna
 ;; la secuencia de movimientos necesarios para resolver las Torres de Hanoi con n discos,
 ;; representando cada movimiento como un par (torre-origen torre-destino)
-
-;; <solucion> ::= ()
-;;             ::= ((<Symbol> <Symbol>) <solucion>)
+;;
+;; <origen-destino-1>  ::= ((origen destino))
+;;
+;; <origen-destino-n>  ::= <origen-destino-1>
+;;                     ::= (<origen-auxiliar-n-1> <origen-destino-1> <auxiliar-destino-n-1>)
 (define hanoi
   (lambda (n origen auxiliar destino)
     (if (equal? n 1)
         (list (cons origen (list destino)))
         (append-list(hanoi (- n 1) origen destino auxiliar)
-                           (append-list (hanoi 1 origen auxiliar destino)
+                           (append-list (list (cons origen (list destino)))
                                         (hanoi (- n 1) auxiliar origen destino))
                            )
                     )
@@ -715,14 +781,19 @@
 ;; Int x Lista de Enteros -> Int : Procedimiento que retorna el numero de
 ;; combinaciones posibles para obtener exactamente el valor monto utilizando
 ;; las monedas disponibles en la lista (con repeticion permitida)
-
+;; <moneda> ::= <Int>
+;;
 ;; <lista-monedas> ::= ()
-;;                 ::= (<Int> <lista-monedas>)
+;;                 ::= (<moneda> <lista-monedas>)
+;;
+;; <cambio> ::= (<moneda>)
+;;          ::= (<moneda> <cambio-menos-moneda>)
+
 (define coin-change
   (lambda (monto monedas)
     (cond
-      ((= monto 0) 1)
-      ((or (< monto 0) (null? monedas)) 0)
+      [(= monto 0) 1]
+      [(or (< monto 0) (null? monedas)) 0]
       (else
       (+ (coin-change monto (cdr monedas))              
           (coin-change (- monto (car monedas)) monedas)
@@ -760,6 +831,8 @@
 ;; Proposito:
 ;; Int -> Lista de Enteros : Procedimiento que retorna la N-esima fila del
 ;; triangulo de Pascal como una lista de enteros
+;; <fila-pascal-n> ::= (1)
+;;                 :: = (0 <fila-pascal-n-1> + <fila-pascal-n-1> 0)
 
 
 (define pascal
