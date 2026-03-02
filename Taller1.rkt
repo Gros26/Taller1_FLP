@@ -200,7 +200,7 @@
 (define palindrome?
   (lambda (palabra)
     (cond
-      [(null? palabra) #t]
+      [(null? palabra) #t] ; Asumimos que la cadena vacia es palindrome
       [(null? (cdr palabra)) #t]
       [else
        (let (
@@ -781,6 +781,7 @@
 ;; Int x Lista de Enteros -> Int : Procedimiento que retorna el numero de
 ;; combinaciones posibles para obtener exactamente el valor monto utilizando
 ;; las monedas disponibles en la lista (con repeticion permitida)
+;;
 ;; <moneda> ::= <Int>
 ;;
 ;; <lista-monedas> ::= ()
@@ -831,6 +832,7 @@
 ;; Proposito:
 ;; Int -> Lista de Enteros : Procedimiento que retorna la N-esima fila del
 ;; triangulo de Pascal como una lista de enteros
+;;
 ;; <fila-pascal-n> ::= (1)
 ;;                 :: = (0 <fila-pascal-n-1> + <fila-pascal-n-1> 0)
 
